@@ -1,11 +1,12 @@
 // Configurações da matriz
 const columns = 'ABCDEF'.split('');
-const rows = Array.from({length: 6}, (_, i) => i + 1);
+const rows = Array.from({ length: 6 }, (_, i) => i + 1);
 
 // Variáveis para armazenar a cor e a posição escolhidas
 let chosenColor;
 let chosenPosition;
 let attempts = 3;
+let selectedColors = []; // Armazena as cores selecionadas pelos jogadores
 
 // Função para gerar uma lista de cores em gradiente (arco-íris)
 function generateRainbowColors(totalColors) {
@@ -22,9 +23,14 @@ function generateRainbowColors(totalColors) {
     return colors;
 }
 
-
 // Inicializa o jogo
 function initGame() {
+    attempts = 3; // Reinicia as tentativas
+    selectedColors = []; // Limpa as cores selecionadas
+    document.getElementById('final-screen').classList.add('hidden'); // Esconde a tela final
+    document.getElementById('message').innerText = ''; // Limpa a mensagem
+    document.getElementById('attempts-remaining').innerText = ''; // Limpa as tentativas restantes
+
     const totalButtons = columns.length * rows.length;
     const colors = generateRainbowColors(totalButtons);
 
@@ -73,6 +79,9 @@ function startGame(colors) {
     matrixDiv.innerHTML = ''; // Limpa o conteúdo anterior
     let colorIndex = 0;
 
+    // Atualiza o número inicial de tentativas
+    updateAttemptsMessage();
+
     for (let i = 0; i < rows.length; i++) {
         for (let j = 0; j < columns.length; j++) {
             const btn = document.createElement('button');
@@ -80,22 +89,38 @@ function startGame(colors) {
             btn.dataset.color = colors[colorIndex];
             btn.dataset.position = columns[j] + rows[i];
             btn.innerHTML = btn.dataset.position; // Exibe a posição no botão
+
             btn.addEventListener('click', () => {
                 if (btn.dataset.attempted) return;
                 btn.dataset.attempted = true;
+
+                // Adiciona a classe 'attempted' ao botão
+                btn.classList.add('attempted');
+
+                // Armazena a cor selecionada
+                selectedColors.push({
+                    color: btn.dataset.color,
+                    position: btn.dataset.position
+                });
+
                 if (btn.dataset.color === chosenColor) {
-                    alert(`Parabéns! Você acertou a cor na posição ${btn.dataset.position}!`);
+                    // Exibe a mensagem de sucesso
+                    document.getElementById('message').innerText = `Parabéns! Você acertou a cor na posição ${btn.dataset.position}!`;
+                    endGame(true);
                 } else {
                     attempts--;
                     if (attempts === 0) {
-                        alert('Game Over! Você perdeu.');
-                        document.getElementById('game-matrix').classList.add('hidden');
-                        document.getElementById('color-selection').classList.remove('hidden');
-                        return;
+                        // Exibe a mensagem de derrota
+                        document.getElementById('message').innerText = 'Game Over! Você perdeu.';
+                        endGame(false);
+                    } else {
+                        // Exibe a mensagem de tentativa
+                        document.getElementById('message').innerText = `Tente novamente!`;
+                        updateAttemptsMessage();
                     }
-                    alert(`Tente novamente! Você ainda tem ${attempts} tentativas.`);
                 }
             });
+
             matrixDiv.appendChild(btn);
             colorIndex++;
         }
@@ -104,4 +129,48 @@ function startGame(colors) {
     document.getElementById('game-matrix').classList.remove('hidden');
 }
 
+// Atualiza a mensagem de tentativas restantes
+function updateAttemptsMessage() {
+    document.getElementById('attempts-remaining').innerText = `Tentativas restantes: ${attempts}`;
+}
+
+// Função para finalizar o jogo e exibir a tela final
+function endGame(won) {
+    // Esconde a matriz do jogo após um pequeno atraso para o jogador ver a última mensagem
+    setTimeout(() => {
+        document.getElementById('game-matrix').classList.add('hidden');
+
+        // Exibe as cores selecionadas pelos jogadores
+        const selectedColorsDiv = document.getElementById('selected-colors');
+        selectedColorsDiv.innerHTML = '';
+        selectedColors.forEach(item => {
+            const btn = document.createElement('button');
+            btn.style.backgroundColor = item.color;
+            btn.innerHTML = item.position;
+            selectedColorsDiv.appendChild(btn);
+        });
+
+        // Exibe a cor escolhida pelo primeiro jogador
+        const chosenColorDiv = document.getElementById('chosen-color-display');
+        chosenColorDiv.innerHTML = '';
+        const chosenBtn = document.createElement('button');
+        chosenBtn.style.backgroundColor = chosenColor;
+        chosenBtn.innerHTML = chosenPosition;
+        chosenColorDiv.appendChild(chosenBtn);
+
+        // Limpa mensagens
+        document.getElementById('message').innerText = '';
+        document.getElementById('attempts-remaining').innerText = '';
+
+        document.getElementById('final-screen').classList.remove('hidden');
+    }, 1000); // Atraso de 1 segundo
+}
+
+// Evento para o botão de reiniciar o jogo
+document.getElementById('restart-button').addEventListener('click', () => {
+    document.getElementById('final-screen').classList.add('hidden');
+    initGame();
+});
+
+// Inicia o jogo ao carregar a página
 window.onload = initGame;

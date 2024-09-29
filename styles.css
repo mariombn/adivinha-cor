@@ -32,3 +32,29 @@ button {
 .hidden {
     display: none;
 }
+
+/* Estilos para o bloco de mensagens */
+#message-container {
+    margin-top: 20px;
+}
+
+#message {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#attempts-remaining {
+    font-size: 16px;
+}
+
+/* Estilos para botões já selecionados */
+button.attempted {
+    background-color: #555555 !important; /* Cinza escuro */
+    color: #ffffff;
+    cursor: default;
+}
+
+#restart-button {
+    width: 200px;
+    background-color: cadetblue;
+}

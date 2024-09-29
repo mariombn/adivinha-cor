@@ -2,7 +2,9 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Jogo da Matriz de Cores</title>
+    <title>Adivinha a Cor</title>
+    <!-- Adiciona a meta tag viewport para responsividade em dispositivos móveis -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -12,8 +14,27 @@
     </div>
 
     <div id="game-matrix" class="hidden">
-        <h2>Matriz de Cores</h2>
+        <h2>Adivinha a Cor</h2>
         <div id="matrix"></div>
+        <!-- Bloco para mensagens -->
+        <div id="message-container">
+            <p id="message"></p>
+            <p id="attempts-remaining"></p>
+        </div>
+    </div>
+
+    <!-- Seção para a tela final -->
+    <div id="final-screen" class="hidden">
+        <h2>Resultado do Jogo</h2>
+        <div id="player-selections">
+            <h3>Suas Tentativas:</h3>
+            <div id="selected-colors"></div>
+        </div>
+        <div id="chosen-color">
+            <h3>Cor Escolhida pelo Primeiro Jogador:</h3>
+            <div id="chosen-color-display"></div>
+        </div>
+        <button id="restart-button">Jogar Novamente</button>
     </div>
 
     <script src="script.js"></script>
